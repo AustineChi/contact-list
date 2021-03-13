@@ -11,15 +11,7 @@ export const App = () => {
 
 	const addPhoneNumber = () => {
 		if (number) {
-			const newItem = {
-				phoneNumber: formatNumber(number),
-				order: 1,
-			};
-			const items = [...phoneNumbers];
-			for (const key in items) {
-				items[key] = { ...items[key], order: items[key].order + 1 };
-			}
-			setPhoneNumbers([newItem, ...items]);
+			setPhoneNumbers([formatNumber(number), ...phoneNumbers]);
 			setNumber("");
 		}
 	};
@@ -29,24 +21,16 @@ export const App = () => {
 	};
 
 	const handleDrop = (ev) => {
-		const dragBox = phoneNumbers.find((box) => box.phoneNumber === dragId);
-		const dropBox = phoneNumbers.find(
-			(box) => box.phoneNumber === ev.currentTarget.id
+		const list = [...phoneNumbers];
+		const dragIndex = phoneNumbers.findIndex((item) => item === dragId);
+		const dropIndex = phoneNumbers.findIndex(
+			(item) => item === ev.currentTarget.id
 		);
-		const dragBoxOrder = dragBox.order;
-		const dropBoxOrder = dropBox.order;
+		const temporaryValue = phoneNumbers[dragIndex];
+		list[dragIndex] = phoneNumbers[dropIndex];
+		list[dropIndex] = temporaryValue;
 
-		const newBoxState = phoneNumbers.map((box) => {
-			if (box.phoneNumber === dragId) {
-				box.order = dropBoxOrder;
-			}
-			if (box.phoneNumber === ev.currentTarget.id) {
-				box.order = dragBoxOrder;
-			}
-			return box;
-		});
-
-		setPhoneNumbers(newBoxState);
+		setPhoneNumbers([...list]);
 	};
 
 	return (
@@ -58,16 +42,14 @@ export const App = () => {
 				addPhoneNumber={addPhoneNumber}
 			/>
 			<PhoneNumbersWrapper>
-				{phoneNumbers
-					.sort((a, b) => a.order - b.order)
-					.map((item) => (
-						<PhoneNumber
-							key={item.phoneNumber}
-							phoneNumber={item.phoneNumber}
-							handleDrag={handleDrag}
-							handleDrop={handleDrop}
-						/>
-					))}
+				{phoneNumbers.map((phoneNumber, key) => (
+					<PhoneNumber
+						key={key}
+						phoneNumber={phoneNumber}
+						handleDrag={handleDrag}
+						handleDrop={handleDrop}
+					/>
+				))}
 			</PhoneNumbersWrapper>
 		</Container>
 	);
