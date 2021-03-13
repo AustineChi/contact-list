@@ -13,9 +13,13 @@ export const App = () => {
 		if (number) {
 			const newItem = {
 				phoneNumber: formatNumber(number),
-				order: phoneNumbers.length + 1,
+				order: 1,
 			};
-			setPhoneNumbers([newItem, ...phoneNumbers]);
+			const items = [...phoneNumbers];
+			for (const key in items) {
+				items[key] = { ...items[key], order: items[key].order + 1 };
+			}
+			setPhoneNumbers([newItem, ...items]);
 			setNumber("");
 		}
 	};
